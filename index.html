@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flex-E Scan — Vind de juiste energie-adviseur</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.x/tabler-icons.min.css">
+<style>
+:root{
+  --bg:#f4f4f2;--bg2:#e8e8e5;--card:#ffffff;
+  --black:#141412;--text:#2a2a27;--muted:#6b6a62;--subtle:#9e9d97;
+  --border:rgba(0,0,0,0.09);--border2:rgba(0,0,0,0.16);
+  --green:#3B6D11;--gl:#EAF3DE;--gm:#97C459;--gb:rgba(59,109,17,0.1);
+  --r:8px;--rl:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:15px;line-height:1.65;-webkit-font-smoothing:antialiased}
+a{text-decoration:none;color:inherit}
+h1,h2,h3{letter-spacing:-.025em;color:var(--black)}
+input,select,textarea{width:100%;font-size:14px;padding:10px 13px;border-radius:var(--r);border:0.5px solid var(--border2);background:var(--card);color:var(--text);font-family:'Inter',sans-serif;transition:border-color .15s,box-shadow .15s;outline:none;-webkit-appearance:none}
+input:focus,select:focus,textarea:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(59,109,17,0.1)}
+input::placeholder,textarea::placeholder{color:#bbb}
+@keyframes fadein{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.75)}}
+@keyframes reveal{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.fade{animation:fadein .6s ease both}
+.fade2{animation:fadein .6s .1s ease both}
+.fade3{animation:fadein .6s .2s ease both}
+.fade4{animation:fadein .6s .3s ease both}
+.reveal{opacity:0;transform:translateY(14px);transition:opacity .55s ease,transform .55s ease}
+.reveal.in{opacity:1;transform:translateY(0)}
+
+/* NAV */
+nav{display:flex;align-items:center;justify-content:space-between;padding:0 48px;height:60px;border-bottom:0.5px solid var(--border);background:rgba(244,244,242,0.94);backdrop-filter:blur(12px);position:sticky;top:0;z-index:100}
+.nav-brand{display:flex;align-items:center;gap:9px;font-size:15px;font-weight:600;color:var(--black);letter-spacing:-.02em}
+.nav-dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 2.5s ease infinite;flex-shrink:0}
+.nav-links{display:flex;gap:28px;font-size:13px;color:var(--muted)}
+.nav-links a:hover{color:var(--black)}
+.nav-cta{background:var(--black);color:#fff;padding:8px 18px;border-radius:var(--r);font-size:13px;font-weight:500;transition:background .15s;white-space:nowrap}
+.nav-cta:hover{background:var(--green)}
+
+/* TICKER */
+.ticker{background:var(--green);overflow:hidden;padding:8px 0;white-space:nowrap}
+.ticker-inner{display:inline-flex;animation:ticker 30s linear infinite}
+.t-item{font-family:'DM Mono',monospace;font-size:11px;color:rgba(255,255,255,.9);padding:0 28px}
+.t-sep{opacity:.45}
+
+/* HERO */
+.hero{max-width:960px;margin:0 auto;padding:72px 48px 64px;display:grid;grid-template-columns:1fr 380px;gap:64px;align-items:start}
+.hero-ey{display:inline-flex;align-items:center;gap:7px;font-family:'DM Mono',monospace;font-size:10px;color:var(--green);background:var(--gl);border:0.5px solid rgba(59,109,17,.2);padding:4px 11px;border-radius:20px;margin-bottom:16px;letter-spacing:.05em}
+.hero-ey-dot{width:5px;height:5px;border-radius:50%;background:var(--green);animation:pulse 2s ease infinite;flex-shrink:0}
+h1{font-size:44px;font-weight:700;line-height:1.1;margin-bottom:18px;max-width:480px}
+h1 em{color:var(--green);font-style:normal}
+.hero-sub{font-size:16px;color:var(--muted);line-height:1.7;font-weight:300;max-width:440px;margin-bottom:28px}
+.hero-btns{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:28px}
+.btn-p{background:var(--black);color:#fff;padding:12px 22px;border-radius:var(--r);font-size:13px;font-weight:600;border:none;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:7px}
+.btn-p:hover{background:var(--green)}
+.btn-s{background:transparent;color:var(--black);padding:12px 20px;border-radius:var(--r);font-size:13px;font-weight:500;border:0.5px solid var(--border2);cursor:pointer;transition:all .15s}
+.btn-s:hover{border-color:var(--green);color:var(--green)}
+.hero-stats{display:flex;gap:24px;flex-wrap:wrap}
+.hstat strong{font-family:'DM Mono',monospace;font-size:15px;font-weight:500;color:var(--green);display:block;margin-bottom:1px}
+.hstat span{font-size:11px;color:var(--muted)}
+
+/* HERO CARD */
+.hcard{background:var(--card);border:0.5px solid var(--border);border-radius:var(--rl);padding:20px;box-shadow:0 2px 24px rgba(0,0,0,.07)}
+.hc-lbl{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:12px}
+.adv-row{display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:var(--r);background:var(--bg);border:0.5px solid var(--border);margin-bottom:6px;transition:border-color .15s}
+.adv-row:hover{border-color:rgba(59,109,17,.3)}
+.av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.av-a{background:#d4edda;color:#1a5c2a}.av-b{background:#d4e6f1;color:#1a4a6e}.av-c{background:#fde8d8;color:#7a3012}
+.adv-name{font-size:12px;font-weight:500}
+.adv-spec{font-size:11px;color:var(--muted);margin-top:1px}
+.adv-score{margin-left:auto;font-family:'DM Mono',monospace;font-size:11px;color:var(--green);font-weight:500;flex-shrink:0}
+.hc-match{background:var(--gl);border:0.5px solid rgba(59,109,17,.2);border-radius:var(--r);padding:9px 12px;margin-top:10px;display:flex;gap:8px;font-size:11px;line-height:1.55}
+.hc-dot{width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0;margin-top:3px}
+.hc-dead{background:var(--bg2);border-radius:var(--r);padding:8px 12px;margin-top:6px;display:flex;justify-content:space-between;font-size:11px;font-family:'DM Mono',monospace}
+.hc-dead-l{color:var(--muted)}.hc-dead-v{color:#b8760a;font-weight:500}
+
+/* DIVIDER */
+.divider{border:none;border-top:0.5px solid var(--border);max-width:960px;margin:0 auto}
+
+/* SECTION */
+.section{max-width:960px;margin:0 auto;padding:72px 48px}
+.sec-ey{font-family:'DM Mono',monospace;font-size:10px;color:var(--green);letter-spacing:.07em;text-transform:uppercase;margin-bottom:10px}
+h2{font-size:34px;font-weight:700;line-height:1.15;margin-bottom:14px}
+.sec-sub{font-size:16px;color:var(--muted);font-weight:300;line-height:1.7;max-width:500px;margin-bottom:44px}
+
+/* PROBLEM */
+.prob-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.prob-card{background:var(--card);border:0.5px solid var(--border);border-radius:var(--rl);padding:22px}
+.prob-icon{font-size:22px;color:var(--muted);margin-bottom:12px}
+.prob-h{font-size:14px;font-weight:600;color:var(--black);margin-bottom:6px}
+.prob-p{font-size:13px;color:var(--muted);line-height:1.6}
+
+/* HOW */
+.how-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.how-card{background:var(--card);border:0.5px solid var(--border);border-radius:var(--rl);padding:22px;position:relative;overflow:hidden}
+.how-ghost{position:absolute;top:8px;right:14px;font-size:52px;font-weight:700;color:rgba(0,0,0,.04);line-height:1;pointer-events:none}
+.how-num{font-family:'DM Mono',monospace;font-size:10px;color:var(--green);margin-bottom:12px;letter-spacing:.06em}
+.how-h{font-size:15px;font-weight:600;color:var(--black);margin-bottom:8px}
+.how-p{font-size:13px;color:var(--muted);line-height:1.6}
+
+/* TWO SIDES */
+.two-sides{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.side{border-radius:var(--rl);padding:28px 30px;border:0.5px solid var(--border)}
+.side-b{background:var(--card)}
+.side-a{background:var(--gl);border-color:rgba(59,109,17,.22)}
+.side-ey{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.07em;text-transform:uppercase;margin-bottom:12px}
+.side-ey-b{color:var(--muted)}.side-ey-a{color:var(--green)}
+.side-h{font-size:21px;font-weight:700;color:var(--black);margin-bottom:8px;line-height:1.25}
+.side-p{font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.65}
+.side-list{list-style:none;margin-bottom:22px}
+.side-list li{font-size:13px;color:var(--text);padding:7px 0;border-bottom:0.5px solid var(--border);display:flex;align-items:flex-start;gap:8px}
+.side-list li:last-child{border-bottom:none}
+.side-list li::before{content:"→";color:var(--green);font-size:11px;flex-shrink:0;margin-top:3px}
+
+/* SUBSIDY */
+.sub-block{background:var(--card);border:0.5px solid rgba(59,109,17,.18);border-radius:var(--rl);padding:40px 44px;display:grid;grid-template-columns:1fr auto;gap:48px;align-items:center}
+.sub-h{font-size:26px;font-weight:700;color:var(--black);margin-bottom:10px}
+.sub-p{font-size:15px;color:var(--muted);line-height:1.65;max-width:460px;margin-bottom:18px}
+.pills{display:flex;gap:6px;flex-wrap:wrap}
+.pill{font-size:11px;padding:3px 10px;border-radius:20px;font-family:'DM Mono',monospace;font-weight:500}
+.pill-g{background:var(--gl);color:var(--green);border:0.5px solid rgba(59,109,17,.22)}
+.pill-n{background:var(--bg2);color:var(--muted);border:0.5px solid var(--border)}
+.sub-num{font-size:64px;font-weight:700;color:var(--green);line-height:1;letter-spacing:-.03em;text-align:center}
+.sub-den{font-size:12px;color:var(--muted);text-align:center;margin-top:5px;line-height:1.5}
+
+/* FORMS — FULL WIDTH */
+.forms-wrap{background:var(--bg2);border-top:0.5px solid var(--border);border-bottom:0.5px solid var(--border);padding:80px 0}
+.forms-inner{max-width:960px;margin:0 auto;padding:0 48px}
+.form-tabs{display:flex;gap:6px;margin-bottom:40px}
+.ftab{padding:10px 22px;border-radius:var(--r);font-size:13px;font-weight:500;cursor:pointer;border:0.5px solid var(--border);background:var(--card);color:var(--muted);transition:all .2s}
+.ftab.active{background:var(--black);color:#fff;border-color:var(--black)}
+.fpanel{display:none}.fpanel.active{display:block}
+
+/* FORM LAYOUT */
+.form-layout{display:grid;grid-template-columns:320px 1fr;gap:56px;align-items:start}
+.form-left h3{font-size:22px;font-weight:700;color:var(--black);margin-bottom:10px}
+.form-left p{font-size:14px;color:var(--muted);line-height:1.65;margin-bottom:24px}
+.benefit{display:flex;align-items:flex-start;gap:10px;margin-bottom:12px}
+.ben-ic{width:28px;height:28px;border-radius:6px;background:var(--gl);display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--green);flex-shrink:0;margin-top:1px}
+.ben-txt{font-size:13px;color:var(--text);line-height:1.55}
+.ben-txt strong{color:var(--black);font-weight:500}
+
+/* STEP FORM */
+.fs-box{background:var(--card);border:0.5px solid var(--border);border-radius:var(--rl);padding:32px 36px}
+.prog{display:flex;gap:4px;margin-bottom:22px}
+.prog-s{flex:1;height:2.5px;border-radius:2px;background:var(--bg2);transition:background .3s}
+.prog-s.done{background:var(--green)}
+.prog-s.active{background:var(--gm)}
+.fstep{display:none}.fstep.active{display:block}
+.ftag{font-size:10px;color:var(--green);font-family:'DM Mono',monospace;letter-spacing:.07em;text-transform:uppercase;margin-bottom:4px}
+.fh{font-size:18px;font-weight:600;color:var(--black);margin-bottom:3px;line-height:1.3}
+.fsub{font-size:13px;color:var(--muted);margin-bottom:18px;line-height:1.5}
+.field{margin-bottom:13px}
+.lbl{font-size:12px;font-weight:500;color:var(--muted);margin-bottom:5px;display:flex;align-items:center;gap:5px}
+.req{color:var(--green)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.opts3{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.opt{border:0.5px solid var(--border2);border-radius:var(--r);padding:10px 12px;cursor:pointer;transition:all .15s;background:var(--card);display:flex;align-items:flex-start;gap:8px;user-select:none}
+.opt:hover{border-color:var(--gm);background:var(--bg)}
+.opt.sel{border:1.5px solid var(--green);background:var(--gl)}
+.opt i{font-size:14px;color:var(--muted);flex-shrink:0;margin-top:2px;transition:color .15s}
+.opt.sel i{color:var(--green)}
+.opt-t{font-size:12px;font-weight:500}
+.opt-s{font-size:10px;color:var(--muted);margin-top:1px}
+.hint{font-size:11px;color:var(--muted);margin-top:5px;line-height:1.5;padding:7px 10px;background:var(--bg);border-left:2px solid var(--gm);border-radius:0 var(--r) var(--r) 0}
+.fnav{display:flex;gap:8px;margin-top:18px;align-items:center}
+.btn-fn{background:var(--black);color:#fff;border:none;padding:11px 22px;border-radius:var(--r);font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:background .15s}
+.btn-fn:hover{background:var(--green)}
+.btn-fb{background:none;border:0.5px solid var(--border2);color:var(--muted);padding:11px 15px;border-radius:var(--r);font-size:13px;cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s}
+.btn-fb:hover{border-color:var(--border2);color:var(--black)}
+.fctr{font-size:11px;color:var(--muted);margin-left:auto;font-family:'DM Mono',monospace}
+
+/* TOOLTIP */
+.ttw{position:relative;display:inline-flex;align-items:center}
+.ttic{width:14px;height:14px;border-radius:50%;background:var(--bg2);border:0.5px solid var(--border2);font-size:8px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);font-weight:700;flex-shrink:0;transition:all .15s}
+.ttic:hover{background:var(--gl);border-color:var(--gm);color:var(--green)}
+.ttbox{display:none;position:absolute;bottom:calc(100% + 7px);left:50%;transform:translateX(-50%);background:var(--black);color:#f4f4f2;font-size:11px;line-height:1.55;padding:8px 11px;border-radius:var(--r);width:210px;z-index:30;pointer-events:none}
+.ttbox::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:var(--black)}
+.ttw:hover .ttbox{display:block}
+.opt-tt{position:absolute;top:7px;right:7px}
+.opt-tt .ttbox{left:auto;right:0;transform:none}
+.opt-tt .ttbox::after{left:auto;right:12px;transform:none}
+
+/* SUCCESS */
+.fsuccess{display:none;text-align:center;padding:16px 0}
+.fsuccess i{font-size:40px;color:var(--green);display:block;margin-bottom:10px}
+.fsuccess h4{font-size:18px;font-weight:700;color:var(--black);margin-bottom:6px}
+.fsuccess p{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:16px;max-width:380px;margin-left:auto;margin-right:auto}
+.sum-box{background:var(--bg);border-radius:var(--r);padding:14px 16px;text-align:left;margin-bottom:10px}
+.sum-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:0.5px solid var(--border);font-size:13px}
+.sum-row:last-child{border-bottom:none}
+.sum-l{color:var(--muted)}.sum-v{font-weight:500}
+.mnote{background:var(--gl);border:0.5px solid rgba(59,109,17,.22);border-radius:var(--r);padding:10px 13px;display:flex;gap:9px;font-size:12px;text-align:left}
+.mn-dot{width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0;margin-top:4px}
+.mn-txt{color:#27500A;line-height:1.55}
+
+/* ADVISEUR FORM */
+.adv-fbox{background:var(--card);border:0.5px solid var(--border);border-radius:var(--rl);padding:32px 36px}
+.adv-step{display:none}.adv-step.active{display:block}
+.chk-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.chk-opt{display:flex;align-items:center;gap:8px;padding:9px 12px;border:0.5px solid var(--border2);border-radius:var(--r);cursor:pointer;transition:all .15s;background:var(--card);user-select:none}
+.chk-opt:hover{border-color:var(--gm)}
+.chk-opt.sel{border:1.5px solid var(--green);background:var(--gl)}
+.chk-opt i{font-size:14px;color:var(--muted);flex-shrink:0;transition:color .15s}
+.chk-opt.sel i{color:var(--green)}
+.chk-opt-t{font-size:12px;font-weight:500}
+
+/* FOOTER */
+footer{padding:26px 48px;display:flex;align-items:center;justify-content:space-between;border-top:0.5px solid var(--border);max-width:100%}
+.foot-brand{font-size:13px;font-weight:600;color:var(--muted)}
+.foot-note{font-size:12px;color:var(--muted);font-family:'DM Mono',monospace}
+.foot-dead{font-size:11px;color:var(--green);font-family:'DM Mono',monospace;background:var(--gl);padding:3px 10px;border-radius:20px}
+
+@media(max-width:800px){
+  nav{padding:0 20px}.nav-links{display:none}
+  .hero{grid-template-columns:1fr;padding:48px 20px;gap:36px}
+  .hcard{display:none}
+  h1{font-size:32px}
+  .section{padding:56px 20px}
+  .prob-grid,.how-grid,.two-sides{grid-template-columns:1fr}
+  .sub-block{grid-template-columns:1fr;padding:28px 24px}
+  .sub-num{font-size:44px}
+  .forms-wrap{padding:56px 0}
+  .forms-inner{padding:0 20px}
+  .form-layout{grid-template-columns:1fr}
+  footer{flex-direction:column;gap:10px;text-align:center;padding:20px}
+}
+</style>
+</head>
+<body>
+
+<!-- Netlify form detection — hidden, required for Netlify to register forms -->
+<form name="bedrijf" netlify netlify-honeypot="bot-field" hidden>
+  <input type="text" name="bedrijfsnaam">
+  <input type="text" name="stad">
+  <input type="text" name="sector">
+  <input type="text" name="aansluitgrootte">
+  <input type="text" name="ato">
+  <input type="text" name="urgentie">
+  <input type="text" name="piekverbruik">
+  <input type="text" name="opwek">
+  <input type="text" name="opslag">
+  <input type="text" name="voornaam">
+  <input type="text" name="achternaam">
+  <input type="email" name="email">
+  <input type="tel" name="telefoon">
+  <input type="text" name="bot-field">
+</form>
+<form name="adviseur" netlify netlify-honeypot="bot-field" hidden>
+  <input type="text" name="voornaam">
+  <input type="text" name="achternaam">
+  <input type="text" name="bedrijfsnaam">
+  <input type="email" name="email">
+  <input type="tel" name="telefoon">
+  <input type="text" name="stad">
+  <input type="url" name="website">
+  <input type="text" name="sectoren">
+  <input type="text" name="werkgebied">
+  <input type="text" name="referenties">
+  <input type="text" name="certificering">
+  <textarea name="aanpak"></textarea>
+  <input type="text" name="doorlooptijd">
+  <input type="text" name="prijs">
+  <input type="text" name="bot-field">
+</form>
+
+<nav>
+  <div class="nav-brand"><div class="nav-dot"></div>Flex-E Scan</div>
+  <div class="nav-links">
+    <a href="#hoe">Hoe het werkt</a>
+    <a href="#voor-wie">Voor wie</a>
+    <a href="#subsidie">Subsidie</a>
+    <a href="#aanmelden">Aanmelden</a>
+  </div>
+  <a href="#aanmelden" class="nav-cta">Vind mijn match</a>
+</nav>
+
+<div class="ticker">
+  <div class="ticker-inner">
+    <span class="t-item">Flex-e subsidie open t/m 15 oktober 2026 <span class="t-sep">·</span></span>
+    <span class="t-item">50% vergoed op jouw flexibiliteitsscan <span class="t-sep">·</span></span>
+    <span class="t-item">Max. €10.000 subsidie <span class="t-sep">·</span></span>
+    <span class="t-item">Budget €30M —  <span class="t-sep">·</span></span>
+    <span class="t-item">20.000+ bedrijven op wachtlijst <span class="t-sep">·</span></span>
+    <span class="t-item">Flex-e subsidie open t/m 15 oktober 2026 <span class="t-sep">·</span></span>
+    <span class="t-item">50% vergoed op jouw flexibiliteitsscan <span class="t-sep">·</span></span>
+    <span class="t-item">Max. €10.000 subsidie <span class="t-sep">·</span></span>
+    <span class="t-item">Budget €30M —  <span class="t-sep">·</span></span>
+    <span class="t-item">20.000+ bedrijven op wachtlijst <span class="t-sep">·</span></span>
+  </div>
+</div>
+
+<div class="hero">
+  <div>
+    <div class="hero-ey fade"><div class="hero-ey-dot"></div>Gratis matching · Flex-e subsidie 2026</div>
+    <h1 class="fade2">Wij matchen gratis de drie adviseurs die passen bij <em>jouw situatie.</em></h1>
+    <p class="hero-sub fade3"><b>Netcongestie</b> blokkeert groei, uitbreiding en verduurzaming voor tienduizenden Nederlandse ondernemers. De <b>Flex-e subsidie</b> biedt een concrete route, mits je werkt met een adviseur die <b>gespecialiseerd is in jouw sector en regio</b>. Dat maakt het verschil tussen een rapport dat in de la verdwijnt en een aanpak die werkt. Flex-E Scan vindt die specialist voor jou. <b>Gratis.</b></p>
+    <div class="hero-btns fade4">
+      <a href="#aanmelden" class="btn-p">Vind mijn match →</a>
+      <a href="#aanmelden" class="btn-s" onclick="switchTab('adviseur')">Ik ben adviseur</a>
+    </div>
+    <div class="hero-stats fade4">
+      <div class="hstat"><strong>50%</strong><span>subsidie op scans</span></div>
+      <div class="hstat"><strong>€10.000</strong><span>max. vergoeding</span></div>
+      <div class="hstat"><strong>15 okt</strong><span>deadline aanvraag</span></div>
+      <div class="hstat"><strong>Gratis</strong><span>voor bedrijven</span></div>
+    </div>
+  </div>
+  <div class="hcard fade3">
+    <div class="hc-lbl">Adviseurs voor jouw situatie</div>
+    <div class="adv-row"><div class="av av-a">MK</div><div><div class="adv-name">Mark Kuijpers</div><div class="adv-spec">Industrie · Utrecht, Gelderland</div></div><div class="adv-score">★ 4.9</div></div>
+    <div class="adv-row"><div class="av av-b">SB</div><div><div class="adv-name">Sara van den Berg</div><div class="adv-spec">Bouw &amp; infra · Noord-Holland</div></div><div class="adv-score">★ 4.8</div></div>
+    <div class="adv-row"><div class="av av-c">JH</div><div><div class="adv-name">Joost Hermans</div><div class="adv-spec">MKB · Landelijk</div></div><div class="adv-score">★ 4.7</div></div>
+    <div class="hc-match"><div class="hc-dot"></div><div>Beste match op basis van jouw sector en regio. <strong>3 adviseurs beschikbaar.</strong></div></div>
+    <div class="hc-dead"><span class="hc-dead-l">Subsidie deadline</span><span class="hc-dead-v" id="dead-val">15 okt 2026</span></div>
+  </div>
+</div>
+
+<!-- FORMS — FULL WIDTH -->
+<div class="forms-wrap" id="aanmelden">
+  <div class="forms-inner">
+    <div class="sec-ey" style="margin-bottom:10px">Aanmelden</div>
+    <h2 style="margin-bottom:24px">Start jouw match vandaag.</h2>
+    <div class="form-tabs">
+      <div class="ftab active" id="tab-bedrijf" onclick="switchTab('bedrijf')">Ik zoek een adviseur</div>
+      <div class="ftab" id="tab-adviseur" onclick="switchTab('adviseur')">Ik ben adviseur</div>
+    </div>
+
+    <!-- BEDRIJF -->
+    <div class="fpanel active" id="panel-bedrijf">
+      <div class="form-layout">
+        <div class="form-left">
+          <h3>Voor bedrijven</h3>
+          <p>Vul het formulier in. We sturen jou binnen 2 werkdagen drie adviseurs die passen bij jouw situatie. Gratis en vrijblijvend.</p>
+          <div class="benefit"><div class="ben-ic"><i class="ti ti-check"></i></div><div class="ben-txt"><strong>Gratis matching</strong> — Flex-E Scan brengt geen kosten in rekening voor bedrijven.</div></div>
+          <div class="benefit"><div class="ben-ic"><i class="ti ti-shield-check"></i></div><div class="ben-txt"><strong>Gescreende adviseurs</strong> — Alleen adviseurs met aantoonbare sectorervaring.</div></div>
+          <div class="benefit"><div class="ben-ic"><i class="ti ti-clock"></i></div><div class="ben-txt"><strong>Snel</strong> — Binnen 2 werkdagen drie namen in jouw inbox.</div></div>
+          <div class="benefit"><div class="ben-ic"><i class="ti ti-receipt"></i></div><div class="ben-txt"><strong>Subsidie geregeld</strong> — De adviseur en Flex-E Scan begeleiden de Flex-e aanvraag bij RVO.</div></div>
+          <div class="benefit"><div class="ben-ic"><i class="ti ti-building-off"></i></div><div class="ben-txt"><strong>Volledig onafhankelijk</strong> — Wij zijn geen adviesbureau en geen onderdeel van een adviesbureau. Daardoor adviseren wij objectief.</div></div>
+        </div>
+        <div>
+          <div class="fs-box" id="bform">
+            <div class="prog"><div class="prog-s active" id="bp0"></div><div class="prog-s" id="bp1"></div><div class="prog-s" id="bp2"></div><div class="prog-s" id="bp3"></div><div class="prog-s" id="bp4"></div></div>
+
+            <div class="fstep active" id="bs0">
+              <div class="ftag">Stap 1 van 5 · Jouw bedrijf</div>
+              <div class="fh">Vertel ons over jouw organisatie</div>
+              <div class="fsub">Alleen de basisgegevens om de matching te starten.</div>
+              <div class="g2">
+                <div class="field"><div class="lbl">Bedrijfsnaam <span class="req">*</span></div><input type="text" id="b-naam" placeholder="Jouw bedrijf"></div>
+                <div class="field"><div class="lbl">Stad / gemeente <span class="req">*</span></div><input type="text" id="b-stad" placeholder="Amsterdam"></div>
+              </div>
+              <div class="field">
+                <div class="lbl">Sector <span style="font-size:10px;color:var(--muted)">(optioneel)</span></div>
+                <select id="b-sbi"><option value="">Kies jouw sector</option><option>Bouw en infra</option><option>Industrie en productie</option><option>Food and feed</option><option>Koeling en logistiek</option><option>Zorg en onderwijs</option><option>Retail en distributie</option><option>Agrarisch</option><option>Vastgoed en utiliteit</option><option>Anders</option></select>
+              </div>
+            </div>
+
+            <div class="fstep" id="bs1">
+              <div class="ftag">Stap 2 van 5 · Aansluiting</div>
+              <div class="fh">Hoe groot is jouw elektriciteitsaansluiting?</div>
+              <div class="fsub">Dit bepaalt of je in aanmerking komt voor Flex-e en welk type scan past bij jouw situatie.</div>
+              <div class="field">
+                <div class="lbl">Aansluitgrootte <span class="req">*</span> <div class="ttw"><div class="ttic">?</div><div class="ttbox">Je aansluitgrootte staat op jouw energiefactuur of in jouw contract met de netbeheerder, vermeld in ampère (A).</div></div></div>
+                <div class="opts">
+                  <div class="opt" style="position:relative" onclick="bPick(this,'b-amp','3×80A of kleiner')"><i class="ti ti-plug"></i><div><div class="opt-t">3×80A of kleiner</div><div class="opt-s">Kleinverbruik</div></div><div class="opt-tt ttw" onclick="event.stopPropagation()"><div class="ttic">?</div><div class="ttbox">Typisch voor kleine kantoren en winkels. Max. ~55 kW. Let op: voor Flex-e subsidie moet jouw aansluiting groter zijn dan 3×80A.</div></div></div>
+                  <div class="opt" style="position:relative" onclick="bPick(this,'b-amp','3×80A tot 3×160A')"><i class="ti ti-bolt"></i><div><div class="opt-t">3×80A tot 3×160A</div><div class="opt-s">Laagspanning</div></div><div class="opt-tt ttw" onclick="event.stopPropagation()"><div class="ttic">?</div><div class="ttbox">Gangbaar voor middelgrote bedrijven en supermarkten. Vermogen 55 tot 110 kW. Komt in aanmerking voor Flex-e subsidie.</div></div></div>
+                  <div class="opt" style="position:relative" onclick="bPick(this,'b-amp','3×160A tot 630A')"><i class="ti ti-bolt"></i><div><div class="opt-t">3×160A tot 630A</div><div class="opt-s">Middenspanning</div></div><div class="opt-tt ttw" onclick="event.stopPropagation()"><div class="ttic">?</div><div class="ttbox">Voor grotere bedrijven met eigen transformator. Vermogen 110 tot 440 kW. Meest voorkomend bij ernstige netcongestie.</div></div></div>
+                  <div class="opt" style="position:relative" onclick="bPick(this,'b-amp','Meer dan 630A')"><i class="ti ti-building-factory"></i><div><div class="opt-t">Meer dan 630A</div><div class="opt-s">Groot industrieel</div></div><div class="opt-tt ttw" onclick="event.stopPropagation()"><div class="ttic">?</div><div class="ttbox">Zware industrie en datacenters. Vermogen boven 440 kW. Specialistische adviseur vereist.</div></div></div>
+                </div>
+                <input type="hidden" id="b-amp">
+              </div>
+              <div class="field" style="margin-top:10px">
+                <div class="lbl">Heb je een ATO met de netbeheerder? <span class="req">*</span> <div class="ttw"><div class="ttic">?</div><div class="ttbox">ATO staat voor aansluit- en transportovereenkomst. Dit is het contract met Liander, Enexis of Stedin. Je vindt dit in jouw administratie.</div></div></div>
+                <div class="opts3"><div class="opt" onclick="bPick(this,'b-ato','Ja')"><div><div class="opt-t">Ja</div></div></div><div class="opt" onclick="bPick(this,'b-ato','Nee')"><div><div class="opt-t">Nee</div></div></div><div class="opt" onclick="bPick(this,'b-ato','Weet ik niet')"><div><div class="opt-t">Weet ik niet</div></div></div></div>
+                <input type="hidden" id="b-ato">
+              </div>
+            </div>
+
+            <div class="fstep" id="bs2">
+              <div class="ftag">Stap 3 van 5 · Het probleem</div>
+              <div class="fh">Wat loopt er vast door netcongestie?</div>
+              <div class="fsub">Dit helpt ons adviseurs te selecteren met ervaring in vergelijkbare situaties als die van jou.</div>
+              <div class="field">
+                <div class="lbl">Effect op jouw organisatie <span class="req">*</span> <span style="font-size:10px;color:var(--muted)">(meerdere mogelijk)</span></div>
+                <div class="opts">
+                  <div class="opt" onclick="this.classList.toggle('sel')"><i class="ti ti-arrow-up-right"></i><div><div class="opt-t">Uitbreiding geblokkeerd</div><div class="opt-s">Groei niet mogelijk</div></div></div>
+                  <div class="opt" onclick="this.classList.toggle('sel')"><i class="ti ti-solar-panel"></i><div><div class="opt-t">Teruglevering vol</div><div class="opt-s">Eigen opwek kwijt</div></div></div>
+                  <div class="opt" onclick="this.classList.toggle('sel')"><i class="ti ti-charging-pile"></i><div><div class="opt-t">Laadinfra niet mogelijk</div><div class="opt-s">EV of machines</div></div></div>
+                  <div class="opt" onclick="this.classList.toggle('sel')"><i class="ti ti-clock-pause"></i><div><div class="opt-t">Project of locatie stil</div><div class="opt-s">Bouwplaats of nieuwbouw</div></div></div>
+                </div>
+              </div>
+              <div class="field" style="margin-top:10px">
+                <div class="lbl">Urgentie</div>
+                <div class="opts3"><div class="opt" onclick="bPick(this,'b-urg','Acuut')"><div><div class="opt-t">Acuut</div><div class="opt-s">Nu vastgelopen</div></div></div><div class="opt" onclick="bPick(this,'b-urg','3 maanden')"><div><div class="opt-t">3 maanden</div><div class="opt-s">Druk neemt toe</div></div></div><div class="opt" onclick="bPick(this,'b-urg','Oriënterend')"><div><div class="opt-t">Oriënterend</div><div class="opt-s">Vooruit kijken</div></div></div></div>
+                <input type="hidden" id="b-urg">
+              </div>
+            </div>
+
+            <div class="fstep" id="bs3">
+              <div class="ftag">Stap 4 van 5 · Jouw situatie</div>
+              <div class="fh">Wat weet je al over jouw energieverbruik?</div>
+              <div class="fsub">Meer inzicht helpt de adviseur beter voorbereid te komen voor jouw situatie.</div>
+              <div class="field">
+                <div class="lbl">Inzicht in piekverbruik <div class="ttw"><div class="ttic">?</div><div class="ttbox">Piekverbruik is het hoogste vermogen dat jouw bedrijf op één moment afneemt. Staat soms als maandpiek op jouw energiefactuur.</div></div></div>
+                <div class="opts3"><div class="opt" onclick="bPick(this,'b-piek','Ja, gedetailleerd')"><div><div class="opt-t">Ja, gedetailleerd</div></div></div><div class="opt" onclick="bPick(this,'b-piek','Globaal beeld')"><div><div class="opt-t">Globaal beeld</div></div></div><div class="opt" onclick="bPick(this,'b-piek','Nee')"><div><div class="opt-t">Nee / weet niet</div></div></div></div>
+                <input type="hidden" id="b-piek">
+              </div>
+              <div class="field" style="margin-top:10px">
+                <div class="lbl">Eigen opwek aanwezig?</div>
+                <div class="opts3"><div class="opt" onclick="bPick(this,'b-opwek','Zonnepanelen')"><div><div class="opt-t">Zonnepanelen</div></div></div><div class="opt" onclick="bPick(this,'b-opwek','Warmtepomp')"><div><div class="opt-t">Warmtepomp</div></div></div><div class="opt" onclick="bPick(this,'b-opwek','Nee')"><div><div class="opt-t">Nee</div></div></div></div>
+                <input type="hidden" id="b-opwek">
+              </div>
+              <div class="field" style="margin-top:10px">
+                <div class="lbl">Batterijopslag aanwezig?</div>
+                <div class="opts3"><div class="opt" onclick="bPick(this,'b-ops','Ja')"><div><div class="opt-t">Ja</div></div></div><div class="opt" onclick="bPick(this,'b-ops','In overweging')"><div><div class="opt-t">In overweging</div></div></div><div class="opt" onclick="bPick(this,'b-ops','Nee')"><div><div class="opt-t">Nee</div></div></div></div>
+                <input type="hidden" id="b-ops">
+              </div>
+            </div>
+
+            <div class="fstep" id="bs4">
+              <div class="ftag">Stap 5 van 5 · Contact</div>
+              <div class="fh">Waar sturen we de match naartoe?</div>
+              <div class="fsub">Binnen 2 werkdagen drie adviseurs die passen bij jouw situatie. Gratis en vrijblijvend.</div>
+              <div class="g2"><div class="field"><div class="lbl">Voornaam <span class="req">*</span></div><input type="text" id="b-vn" placeholder="Voornaam"></div><div class="field"><div class="lbl">Achternaam <span class="req">*</span></div><input type="text" id="b-an" placeholder="Achternaam"></div></div>
+              <div class="field"><div class="lbl">E-mailadres <span class="req">*</span></div><input type="email" id="b-em" placeholder="jouw@bedrijf.nl"></div>
+              <div class="field"><div class="lbl">Telefoonnummer</div><input type="tel" id="b-tel" placeholder="06 12345678"></div>
+              <div class="hint">Flex-E Scan is gratis. Jouw gegevens worden alleen gebruikt om de drie beste adviseurs voor jouw situatie te selecteren.</div>
+            </div>
+
+            <div class="fsuccess" id="b-success">
+              <i class="ti ti-circle-check"></i>
+              <h4>Aanvraag ontvangen</h4>
+              <p>We sturen jou binnen 2 werkdagen drie adviseurs die passen bij jouw situatie.</p>
+              <div class="sum-box" id="b-summary"></div>
+              <div class="mnote"><div class="mn-dot"></div><div class="mn-txt">Drie adviseurs met aantoonbare ervaring in jouw sector en regio. Geen lijst van tien namen, maar drie die echt passen bij jouw situatie.</div></div>
+            </div>
+
+            <div class="fnav" id="b-nav">
+              <button class="btn-fb" id="b-back" onclick="bBack()" style="display:none">Terug</button>
+              <button class="btn-fn" id="b-next" onclick="bNext()">Volgende stap →</button>
+              <span class="fctr" id="b-ctr">1 / 5</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADVISEUR -->
+    <div class="fpanel" id="panel-adviseur">
+      <div class="form-layout">
+        <div class="form-left">
+          <h3>Voor adviseurs</h3>
+          <p>Meld je aan als gecertificeerde partner. Je ontvangt aanvragen die passen bij jouw sector en regio. Geen commissie, geen verborgen kosten.</p>
+          <div class="benefit"><div class="ben-ic"><i class="ti ti-users"></i></div><div class="ben-txt"><strong>Gekwalificeerde leads</strong> — Alleen aanvragen die passen bij jouw specialisatie.</div></div>
+          <div class="benefit"><div class="ben-ic"><i class="ti ti-coin-off"></i></div><div class="ben-txt"><strong>Geen commissie</strong> — Flex-E Scan verdient niets aan de opdrachten die jij uitvoert.</div></div>
+          <div class="benefit"><div class="ben-ic"><i class="ti ti-star"></i></div><div class="ben-txt"><strong>Profiel met reviews</strong> — Jouw referenties en klantbeoordelingen zichtbaar voor bedrijven.</div></div>
+          <div class="benefit"><div class="ben-ic"><i class="ti ti-certificate"></i></div><div class="ben-txt"><strong>Kwaliteitsgarantie</strong> — Flex-E Scan screent alle adviseurs op minimaal drie referenties.</div></div>
+        </div>
+        <div>
+          <div class="adv-fbox" id="aform">
+            <div class="prog"><div class="prog-s active" id="ap0"></div><div class="prog-s" id="ap1"></div><div class="prog-s" id="ap2"></div><div class="prog-s" id="ap3"></div></div>
+
+            <div class="adv-step active" id="as0">
+              <div class="ftag">Stap 1 van 4 · Jouw gegevens</div>
+              <div class="fh">Wie ben je?</div>
+              <div class="fsub">Vul jouw persoons- en bedrijfsgegevens in.</div>
+              <div class="g2"><div class="field"><div class="lbl">Voornaam <span class="req">*</span></div><input type="text" id="a-vn" placeholder="Voornaam"></div><div class="field"><div class="lbl">Achternaam <span class="req">*</span></div><input type="text" id="a-an" placeholder="Achternaam"></div></div>
+              <div class="field"><div class="lbl">Bedrijfsnaam <span class="req">*</span></div><input type="text" id="a-bnaam" placeholder="Jouw adviesbureau"></div>
+              <div class="g2"><div class="field"><div class="lbl">E-mailadres <span class="req">*</span></div><input type="email" id="a-em" placeholder="jouw@advies.nl"></div><div class="field"><div class="lbl">Telefoonnummer <span class="req">*</span></div><input type="tel" id="a-tel" placeholder="06 12345678"></div></div>
+              <div class="g2"><div class="field"><div class="lbl">Stad / regio <span class="req">*</span></div><input type="text" id="a-stad" placeholder="Amsterdam"></div><div class="field"><div class="lbl">Website</div><input type="url" id="a-web" placeholder="https://jouwsite.nl"></div></div>
+            </div>
+
+            <div class="adv-step" id="as1">
+              <div class="ftag">Stap 2 van 4 · Specialisatie</div>
+              <div class="fh">Waar ben jij specialist in?</div>
+              <div class="fsub">Flex-E Scan matcht op basis van jouw sectorkennis en werkgebied.</div>
+              <div class="field">
+                <div class="lbl">Sectorspecialisatie <span class="req">*</span> <span style="font-size:10px;color:var(--muted)">(meerdere mogelijk)</span></div>
+                <div class="chk-grid">
+                  <div class="chk-opt" onclick="this.classList.toggle('sel')"><i class="ti ti-crane"></i><div class="chk-opt-t">Bouw en infra</div></div>
+                  <div class="chk-opt" onclick="this.classList.toggle('sel')"><i class="ti ti-building-factory"></i><div class="chk-opt-t">Industrie</div></div>
+                  <div class="chk-opt" onclick="this.classList.toggle('sel')"><i class="ti ti-meat"></i><div class="chk-opt-t">Food and feed</div></div>
+                  <div class="chk-opt" onclick="this.classList.toggle('sel')"><i class="ti ti-snowflake"></i><div class="chk-opt-t">Koeling en logistiek</div></div>
+                  <div class="chk-opt" onclick="this.classList.toggle('sel')"><i class="ti ti-building-hospital"></i><div class="chk-opt-t">Zorg en onderwijs</div></div>
+                  <div class="chk-opt" onclick="this.classList.toggle('sel')"><i class="ti ti-building-store"></i><div class="chk-opt-t">Retail en distributie</div></div>
+                  <div class="chk-opt" onclick="this.classList.toggle('sel')"><i class="ti ti-plant"></i><div class="chk-opt-t">Agrarisch</div></div>
+                  <div class="chk-opt" onclick="this.classList.toggle('sel')"><i class="ti ti-building"></i><div class="chk-opt-t">Vastgoed en utiliteit</div></div>
+                </div>
+              </div>
+              <div class="field" style="margin-top:10px">
+                <div class="lbl">Werkgebied <span class="req">*</span></div>
+                <div class="opts3"><div class="opt" onclick="aPick(this,'a-wb','Regionaal')"><div><div class="opt-t">Regionaal</div><div class="opt-s">1-2 provincies</div></div></div><div class="opt" onclick="aPick(this,'a-wb','Nationaal')"><div><div class="opt-t">Nationaal</div><div class="opt-s">Heel Nederland</div></div></div><div class="opt" onclick="aPick(this,'a-wb','Europees')"><div><div class="opt-t">Europees</div><div class="opt-s">NL + buurlanden</div></div></div></div>
+                <input type="hidden" id="a-wb">
+              </div>
+            </div>
+
+            <div class="adv-step" id="as2">
+              <div class="ftag">Stap 3 van 4 · Ervaring</div>
+              <div class="fh">Wat is jouw trackrecord?</div>
+              <div class="fsub">Flex-E Scan vereist minimaal drie aantoonbare referentieprojecten voor opname in het platform.</div>
+              <div class="field">
+                <div class="lbl">Aantal uitgevoerde Flex-e scans of vergelijkbare projecten <span class="req">*</span></div>
+                <div class="opts3"><div class="opt" onclick="aPick(this,'a-ref','1-2 projecten')"><div><div class="opt-t">1-2 projecten</div></div></div><div class="opt" onclick="aPick(this,'a-ref','3-10 projecten')"><div><div class="opt-t">3-10 projecten</div></div></div><div class="opt" onclick="aPick(this,'a-ref','10+ projecten')"><div><div class="opt-t">10+ projecten</div></div></div></div>
+                <input type="hidden" id="a-ref">
+              </div>
+              <div class="field" style="margin-top:10px">
+                <div class="lbl">Ben je FedEC-lid of REA gecertificeerd?</div>
+                <div class="opts3"><div class="opt" onclick="aPick(this,'a-fed','FedEC-lid')"><div><div class="opt-t">FedEC-lid</div></div></div><div class="opt" onclick="aPick(this,'a-fed','REA gecertificeerd')"><div><div class="opt-t">REA gecertificeerd</div></div></div><div class="opt" onclick="aPick(this,'a-fed','Geen van beide')"><div><div class="opt-t">Geen van beide</div></div></div></div>
+                <input type="hidden" id="a-fed">
+              </div>
+              <div class="field" style="margin-top:10px">
+                <div class="lbl">Beschrijf jouw aanpak in één zin</div>
+                <textarea id="a-aanpak" placeholder="Bijv. Ik focus op industriële klanten en lever altijd een uitvoerbaar actieplan..." style="height:64px;resize:none"></textarea>
+              </div>
+              <div class="hint">Adviseurs met minder dan 3 referenties worden op een wachtlijst geplaatst totdat ze voldoen aan de minimumvereisten.</div>
+            </div>
+
+            <div class="adv-step" id="as3">
+              <div class="ftag">Stap 4 van 4 · Akkoord</div>
+              <div class="fh">Bijna klaar.</div>
+              <div class="fsub">Flex-E Scan is gratis voor adviseurs. Bevestig jouw aanmelding.</div>
+              <div style="background:var(--bg);border-radius:var(--r);padding:14px;margin-bottom:12px;font-size:13px;color:var(--muted);line-height:1.65">
+                <strong style="color:var(--black);display:block;margin-bottom:6px">Hoe Flex-E Scan werkt voor adviseurs</strong>
+                Flex-E Scan koppelt je aan bedrijven die passen bij jouw sectorkennis en werkgebied. Je ontvangt aanvragen per e-mail en beslist zelf of je reageert. Er wordt geen commissie gerekend. Flex-E Scan is geen adviesbureau en heeft geen commercieel belang bij jouw relatie met de klant.
+              </div>
+              <div class="field">
+                <div class="lbl">Verwachte doorlooptijd flexibiliteitsscan</div>
+                <div class="opts3"><div class="opt" onclick="aPick(this,'a-tijd','2-4 weken')"><div><div class="opt-t">2-4 weken</div></div></div><div class="opt" onclick="aPick(this,'a-tijd','4-8 weken')"><div><div class="opt-t">4-8 weken</div></div></div><div class="opt" onclick="aPick(this,'a-tijd','8+ weken')"><div><div class="opt-t">8+ weken</div></div></div></div>
+                <input type="hidden" id="a-tijd">
+              </div>
+              <div class="field" style="margin-top:10px">
+                <div class="lbl">Indicatieve prijs flexibiliteitsscan</div>
+                <div class="opts3"><div class="opt" onclick="aPick(this,'a-prijs','Onder €5.000')"><div><div class="opt-t">Onder €5.000</div></div></div><div class="opt" onclick="aPick(this,'a-prijs','€5.000-€15.000')"><div><div class="opt-t">€5.000-€15.000</div></div></div><div class="opt" onclick="aPick(this,'a-prijs','Boven €15.000')"><div><div class="opt-t">Boven €15.000</div></div></div></div>
+                <input type="hidden" id="a-prijs">
+              </div>
+              <div class="hint">Aanmelding is vrijblijvend. Flex-E Scan neemt binnen 3 werkdagen contact op voor een kort verificatiegesprek.</div>
+            </div>
+
+            <div class="fsuccess" id="a-success">
+              <i class="ti ti-circle-check"></i>
+              <h4>Aanmelding ontvangen</h4>
+              <p>We nemen binnen 3 werkdagen contact op voor een kort verificatiegesprek om jouw profiel te activeren.</p>
+              <div class="mnote"><div class="mn-dot"></div><div class="mn-txt">Na verificatie wordt jouw profiel zichtbaar voor bedrijven die passen bij jouw sectorspecialisatie en werkgebied.</div></div>
+            </div>
+
+            <div class="fnav" id="a-nav">
+              <button class="btn-fb" id="a-back" onclick="aBack()" style="display:none">Terug</button>
+              <button class="btn-fn" id="a-next" onclick="aNext()">Volgende stap →</button>
+              <span class="fctr" id="a-ctr">1 / 4</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<hr class="divider">
+
+<div class="section">
+  <div class="sec-ey">Het probleem</div>
+  <h2>Niet elke adviseur is de juiste adviseur.</h2>
+  <p class="sec-sub">De Flex-e subsidie vergoedt 50% van een flexibiliteitsscan. Dat trekt veel aanbod aan. Maar een verkeerde match kost je niet alleen geld, maar ook tijd die je niet hebt als het subsidiebudget opraakt.</p>
+  <div class="prob-grid reveal">
+    <div class="prob-card"><div class="prob-icon"><i class="ti ti-file-x"></i></div><div class="prob-h">Het rapport-en-weg model</div><div class="prob-p">Een PDF van 40 pagina's met aanbevelingen die je niet kunt uitvoeren zonder opnieuw advies in te kopen. De adviseur is al verdwenen.</div></div>
+    <div class="prob-card"><div class="prob-icon"><i class="ti ti-zoom-question"></i></div><div class="prob-h">Geen sectorkennis</div><div class="prob-p">Een adviseur die een bakkerij begeleidt heeft andere expertise dan iemand die bouwplaatsen of koelhuizen kent. Netcongestie-oplossingen zijn context-afhankelijk.</div></div>
+    <div class="prob-card"><div class="prob-icon"><i class="ti ti-clock-x"></i></div><div class="prob-h">Te laat is subsidie kwijt</div><div class="prob-p">Het budget is €30M en gaat op volgorde van binnenkomst. Een trage adviseur kost je niet alleen geld maar ook de subsidie zelf.</div></div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<div class="section" id="hoe">
+  <div class="sec-ey">Hoe het werkt</div>
+  <h2>Drie vragen. Drie namen. Eén goede keuze.</h2>
+  <p class="sec-sub">Flex-E Scan screent adviseurs vooraf. Jij kiest op basis van sector, regio en reviews. Geen verrassingen achteraf.</p>
+  <div class="how-grid reveal">
+    <div class="how-card"><div class="how-ghost">01</div><div class="how-num">01 · INTAKE</div><div class="how-h">Vertel ons jouw situatie</div><div class="how-p">Sector, regio en aansluitgrootte. Drie minuten, geen formulierenwerk. Flex-E Scan gebruikt dit om alleen relevante adviseurs te tonen.</div></div>
+    <div class="how-card"><div class="how-ghost">02</div><div class="how-num">02 · MATCHING</div><div class="how-h">Drie gecertificeerde namen</div><div class="how-p">We selecteren maximaal drie adviseurs met aantoonbare ervaring in jouw exacte context, met referenties en reviews van vergelijkbare projecten.</div></div>
+    <div class="how-card"><div class="how-ghost">03</div><div class="how-num">03 · SUBSIDIE</div><div class="how-h">Wij ondersteunen de aanvraag</div><div class="how-p">Jij kiest de adviseur. Wij ondersteunen de Flex-e aanvraag zodat die correct en op tijd wordt ingediend. Flex-E Scan brengt geen kosten in rekening.</div></div>
+  </div>
+</div>
+
+
+
+<hr class="divider">
+
+<div class="section" id="subsidie">
+  <div class="sub-block reveal">
+    <div>
+      <div class="sec-ey" style="margin-bottom:8px">Flex-e subsidie 2026</div>
+      <div class="sub-h">Wat de Flex-e subsidie vergoedt</div>
+      <div class="sub-p">Via de Flex-e regeling van RVO vergoedt de overheid 50% van de kosten van een flexibiliteitsscan, tot een maximum van €10.000 per aanvraag. De regeling loopt tot 15 oktober 2026. Aanvragen worden behandeld op volgorde van binnenkomst totdat het beschikbare budget van ruim €30 miljoen is benut. Flex-E Scan ondersteunt jou bij een correcte en tijdige indiening.</div>
+      <div class="pills">
+        <span class="pill pill-g">Open 6 mei – 15 okt 2026</span>
+        <span class="pill pill-g">50% vergoed</span>
+        <span class="pill pill-n">Budget: €30M+</span>
+        <span class="pill pill-n"></span>
+        <span class="pill pill-n">Via RVO</span>
+      </div>
+    </div>
+    <div>
+      <div class="sub-num">50%</div>
+      <div class="sub-den">van de scankosten<br>vergoed door overheid</div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<hr class="divider">
+
+<div class="section" id="voor-wie">
+  <div class="sec-ey">Voor wie</div>
+  <h2>Twee kanten van dezelfde markt.</h2>
+  <p class="sec-sub">Flex-E Scan bedient zowel bedrijven die vastlopen op netcongestie als adviseurs die hun expertise willen aanbieden aan de juiste klant.</p>
+  <div class="two-sides reveal">
+    <div class="side side-b">
+      <div class="side-ey side-ey-b">Voor bedrijven</div>
+      <div class="side-h">Jij hebt netcongestie. Wij weten wie het kan oplossen.</div>
+      <div class="side-p">Grootverbruiker in een congestiegebied? Flex-E Scan koppelt je aan een adviseur die de scan uitvoert en de subsidieaanvraag begeleidt. Gratis.</div>
+      <ul class="side-list">
+        <li>Aansluiting groter dan 3×80A</li>
+        <li>Gevestigd in congestiegebied</li>
+        <li>Wil groeien of verduurzamen maar het net zit vol</li>
+        <li>Geen idee waar te beginnen met de subsidieaanvraag</li>
+      </ul>
+      <a href="#aanmelden" class="btn-p" style="font-size:13px">Vind mijn adviseur →</a>
+    </div>
+    <div class="side side-a">
+      <div class="side-ey side-ey-a">Voor adviseurs</div>
+      <div class="side-h">Jij hebt de expertise. Wij brengen de klanten die erbij passen.</div>
+      <div class="side-p">Bewezen ervaring met Flex-e scans? Sluit je aan en ontvang aanvragen die aansluiten op jouw sector en regio. Geen commissie. Geen verborgen kosten.</div>
+      <ul class="side-list">
+        <li>Minimaal drie referentieprojecten aantoonbaar</li>
+        <li>Sectorspecialisatie verplicht opgegeven</li>
+        <li>Reviews van echte klanten zichtbaar op profiel</li>
+        <li>Aanmelden is gratis en blijft gratis</li>
+      </ul>
+      <a href="#aanmelden" class="btn-p" onclick="switchTab('adviseur')" style="font-size:13px;background:var(--green)">Aanmelden als adviseur →</a>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="foot-brand">Flex-E Scan · 2026</div>
+  <div class="foot-note">Precisie boven volume. · www.flexescan.com</div>
+  <div class="foot-dead">Subsidie deadline · 15 okt 2026</div>
+</footer>
+
+<script>
+// TABS
+function switchTab(w){
+  ['bedrijf','adviseur'].forEach(t=>{
+    document.getElementById('tab-'+t).classList.toggle('active',t===w);
+    document.getElementById('panel-'+t).classList.toggle('active',t===w);
+  });
+  setTimeout(()=>document.getElementById('aanmelden').scrollIntoView({behavior:'smooth'}),10);
+}
+
+// NETLIFY SUBMIT
+function netlifySubmit(formName, data){
+  const body = new URLSearchParams({'form-name': formName, ...data});
+  fetch('/', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+    body: body.toString()
+  }).catch(e => console.log('Netlify submit:', e));
+}
+
+// BEDRIJF FORM
+let bc=0; const BM=5;
+function bPick(el,f,v){
+  el.closest('.opts,.opts3').querySelectorAll('.opt').forEach(o=>o.classList.remove('sel'));
+  el.classList.add('sel');
+  document.getElementById(f).value=v;
+}
+function bShowStep(n){
+  document.querySelectorAll('#bform .fstep').forEach((s,i)=>s.classList.toggle('active',i===n));
+  for(let i=0;i<BM;i++){
+    const p=document.getElementById('bp'+i);if(!p)continue;
+    p.classList.remove('done','active');
+    if(i<n)p.classList.add('done');
+    else if(i===n)p.classList.add('active');
+  }
+  document.getElementById('b-back').style.display=n>0?'':'none';
+  document.getElementById('b-next').textContent=n===BM-1?'Verstuur aanvraag ↗':'Volgende stap →';
+  document.getElementById('b-ctr').textContent=(n+1)+' / '+BM;
+}
+function bNext(){if(bc<BM-1){bc++;bShowStep(bc);}else{bVerstuur();}}
+function bBack(){if(bc>0){bc--;bShowStep(bc);}}
+function bVerstuur(){
+  const n=document.getElementById('b-naam').value||'';
+  const s=document.getElementById('b-stad').value||'';
+  const em=document.getElementById('b-em').value||'';
+  const amp=document.getElementById('b-amp').value||'';
+  const urg=document.getElementById('b-urg').value||'';
+  // Submit to Netlify
+  netlifySubmit('bedrijf',{
+    bedrijfsnaam:n, stad:s,
+    sector:document.getElementById('b-sbi').value||'',
+    aansluitgrootte:amp,
+    ato:document.getElementById('b-ato').value||'',
+    urgentie:urg,
+    piekverbruik:document.getElementById('b-piek').value||'',
+    opwek:document.getElementById('b-opwek').value||'',
+    opslag:document.getElementById('b-ops').value||'',
+    voornaam:document.getElementById('b-vn').value||'',
+    achternaam:document.getElementById('b-an').value||'',
+    email:em,
+    telefoon:document.getElementById('b-tel').value||''
+  });
+  // Show success
+  document.getElementById('b-nav').style.display='none';
+  document.getElementById('bform').querySelectorAll('.fstep').forEach(s=>s.classList.remove('active'));
+  document.getElementById('b-success').style.display='block';
+  document.getElementById('b-summary').innerHTML=`
+    <div class="sum-row"><span class="sum-l">Bedrijf</span><span class="sum-v">${n}${s?' · '+s:''}</span></div>
+    <div class="sum-row"><span class="sum-l">Aansluiting</span><span class="sum-v">${amp||'niet opgegeven'}</span></div>
+    <div class="sum-row"><span class="sum-l">Urgentie</span><span class="sum-v">${urg||'niet opgegeven'}</span></div>
+    <div class="sum-row"><span class="sum-l">Contact</span><span class="sum-v">${em}</span></div>
+    <div class="sum-row"><span class="sum-l">Match verwacht</span><span class="sum-v" style="color:var(--green)">binnen 2 werkdagen</span></div>`;
+}
+
+// ADVISEUR FORM
+let ac=0; const AM=4;
+function aPick(el,f,v){
+  el.closest('.opts,.opts3').querySelectorAll('.opt').forEach(o=>o.classList.remove('sel'));
+  el.classList.add('sel');
+  document.getElementById(f).value=v;
+}
+function aShowStep(n){
+  document.querySelectorAll('#aform .adv-step').forEach((s,i)=>s.classList.toggle('active',i===n));
+  for(let i=0;i<AM;i++){
+    const p=document.getElementById('ap'+i);if(!p)continue;
+    p.classList.remove('done','active');
+    if(i<n)p.classList.add('done');
+    else if(i===n)p.classList.add('active');
+  }
+  document.getElementById('a-back').style.display=n>0?'':'none';
+  document.getElementById('a-next').textContent=n===AM-1?'Aanmelding versturen ↗':'Volgende stap →';
+  document.getElementById('a-ctr').textContent=(n+1)+' / '+AM;
+}
+function aNext(){if(ac<AM-1){ac++;aShowStep(ac);}else{aVerstuur();}}
+function aBack(){if(ac>0){ac--;aShowStep(ac);}}
+function aVerstuur(){
+  const sectoren=Array.from(document.querySelectorAll('#aform .chk-opt.sel')).map(e=>e.querySelector('.chk-opt-t').textContent).join(', ');
+  netlifySubmit('adviseur',{
+    voornaam:document.getElementById('a-vn').value||'',
+    achternaam:document.getElementById('a-an').value||'',
+    bedrijfsnaam:document.getElementById('a-bnaam').value||'',
+    email:document.getElementById('a-em').value||'',
+    telefoon:document.getElementById('a-tel').value||'',
+    stad:document.getElementById('a-stad').value||'',
+    website:document.getElementById('a-web').value||'',
+    sectoren, werkgebied:document.getElementById('a-wb').value||'',
+    referenties:document.getElementById('a-ref').value||'',
+    certificering:document.getElementById('a-fed').value||'',
+    aanpak:document.getElementById('a-aanpak').value||'',
+    doorlooptijd:document.getElementById('a-tijd').value||'',
+    prijs:document.getElementById('a-prijs').value||''
+  });
+  document.getElementById('a-nav').style.display='none';
+  document.getElementById('aform').querySelectorAll('.adv-step').forEach(s=>s.classList.remove('active'));
+  document.getElementById('a-success').style.display='block';
+}
+
+// SCROLL REVEAL
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');obs.unobserve(e.target);}});
+},{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+// DEADLINE COUNTDOWN
+(function(){
+  const d=new Date('2026-10-15T17:00:00');
+  const diff=d-new Date();
+  if(diff>0){
+    const days=Math.floor(diff/(1000*60*60*24));
+    const el=document.getElementById('dead-val');
+    if(el)el.textContent='15 okt 2026 · '+days+' dgn';
+  }
+})();
+</script>
+</body>
+</html>
